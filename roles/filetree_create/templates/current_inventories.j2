@@ -63,8 +63,8 @@ controller_inventories:
          | default(current_inventories_asset_value.variables)
          | from_yaml | to_nice_yaml(indent=2, sort_keys=False) | indent(width=6, first=False) | regex_replace('(^[^:]*): (.*){([{%])', '\\g<1>: !unsafe \\g<2>{\\g<3>', multiline=True)}}
 {%- endif %}
-{% if template_overrides_resources.inventory[current_inventories_asset_value.name].related.input_inventories is defined
-      or template_overrides_global.inventory.related.input_inventories is defined
+{% if template_overrides_resources.inventory[current_inventories_asset_value.name].input_inventories is defined
+      or template_overrides_global.inventory.input_inventories is defined
       or (current_inventories_asset_value.related.input_inventories is defined and current_inventories_asset_value.related.input_inventories != '---' and current_inventories_asset_value.related.input_inventories != '') %}
 {% set _input_inventories = template_overrides_resources.inventory[current_inventories_asset_value.name].input_inventories
                               | default(template_overrides_global.inventory.input_inventories)
@@ -78,8 +78,8 @@ controller_inventories:
 {%    endfor %}
 {%   endif %}
 {% endif %}
-{% if template_overrides_resources.inventory[current_inventories_asset_value.name].related.instance_groups is defined
-      or template_overrides_global.inventory.related.instance_groups is defined
+{% if template_overrides_resources.inventory[current_inventories_asset_value.name].instance_groups is defined
+      or template_overrides_global.inventory.instance_groups is defined
       or (current_inventories_asset_value.related.instance_groups is defined and current_inventories_asset_value.related.instance_groups != '---' and current_inventories_asset_value.related.instance_groups != '') %}
 {% set _instance_groups = template_overrides_resources.inventory[current_inventories_asset_value.name].instance_groups
                               | default(template_overrides_global.inventory.instance_groups)
