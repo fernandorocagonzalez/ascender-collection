@@ -896,9 +896,14 @@
         that:
           - "result is changed"
 
+    - name: Remember the workflow id, node identifiers are only unique inside a workflow
+      set_fact:
+        conditional_wfjt_id: "{{ result.id }}"
+
     - name: Read back the node carrying the conditional link
       set_fact:
-        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes', query_params={'identifier': 'cond101'}) | first }}"
+        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes',
+                          query_params={'identifier': 'cond101', 'workflow_job_template': conditional_wfjt_id}) | first }}"
 
     - assert:
         that:
@@ -944,7 +949,8 @@
 
     - name: Read back the changed link
       set_fact:
-        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes', query_params={'identifier': 'cond101'}) | first }}"
+        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes',
+                          query_params={'identifier': 'cond101', 'workflow_job_template': conditional_wfjt_id}) | first }}"
 
     - assert:
         that:
@@ -982,7 +988,8 @@
 
     - name: Read back the node with no conditional links left
       set_fact:
-        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes', query_params={'identifier': 'cond101'}) | first }}"
+        cond_node: "{{ query('ctrliq.ascender.controller_api', 'workflow_job_template_nodes',
+                          query_params={'identifier': 'cond101', 'workflow_job_template': conditional_wfjt_id}) | first }}"
 
     - assert:
         that:
