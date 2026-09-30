@@ -314,3 +314,20 @@ def test_associate_only_on_success(run_module, admin_user, organization, project
 
     assert list(jt.notification_templates_success.values_list('id', flat=True)) == []
     assert list(jt.notification_templates_error.values_list('id', flat=True)) == [nt1.id]
+
+
+@pytest.mark.django_db
+def test_job_template_prevent_relaunch(run_module, admin_user, project, inventory):
+    module_args = {'name': 'foo', 'playbook': 'helloworld.yml', 'project': project.name, 'inventory': inventory.name, 'prevent_relaunch': True}
+    result = run_module('job_template', dict(module_args), admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert result['changed']
+    assert JobTemplate.objects.get(name='foo').prevent_relaunch
+
+    result = run_module('job_template', dict(module_args), admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert not result['changed']
+
+    result = run_module('job_template', dict(module_args, prevent_relaunch=False), admin_user)
+    assert result['changed']
+    assert not JobTemplate.objects.get(name='foo').prevent_relaunch

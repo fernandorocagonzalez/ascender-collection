@@ -57,3 +57,35 @@ def test_container_group_create(run_module, admin_user, kube_credential):
 
     ig = InstanceGroup.objects.get(name='foo-c-group')
     assert ig.pod_spec_override == pod_spec
+
+
+@pytest.mark.django_db
+def test_container_group_mesh_node(run_module, admin_user):
+    """A container group behind a hop node is looked up by the node's hostname, and
+    an empty string has to take it off again rather than be ignored.
+    """
+    hop = Instance.objects.create(hostname='hop.example.com', node_type='hop')
+
+    result = run_module('instance_group', {'name': 'remote-c-group', 'is_container_group': True, 'mesh_node': hop.hostname}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert result['changed']
+    assert InstanceGroup.objects.get(name='remote-c-group').mesh_node_id == hop.id
+
+    result = run_module('instance_group', {'name': 'remote-c-group', 'mesh_node': hop.hostname}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert not result['changed']
+
+    result = run_module('instance_group', {'name': 'remote-c-group', 'mesh_node': ''}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert result['changed']
+    assert InstanceGroup.objects.get(name='remote-c-group').mesh_node is None
+
+
+@pytest.mark.django_db
+def test_container_group_mesh_node_must_be_hop(run_module, admin_user):
+    execution = Instance.objects.create(hostname='exec.example.com', node_type='execution')
+
+    result = run_module('instance_group', {'name': 'remote-c-group', 'is_container_group': True, 'mesh_node': execution.hostname}, admin_user)
+    assert result.get('failed', False), result
+    assert 'hop' in result['msg']
+    assert not InstanceGroup.objects.filter(name='remote-c-group').exists()

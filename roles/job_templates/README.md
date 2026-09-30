@@ -116,6 +116,7 @@ This also speeds up the overall role.
 |`ask_labels_on_launch`|""|no|bool|Prompt user for labels on launch.|
 |`ask_timeout_on_launch`|""|no|bool|Prompt user for timeout on launch.|
 |`prevent_instance_group_fallback`|""|no|bool|Prevent falling back to instance groups set on the associated inventory or organization.|
+|`prevent_relaunch`|""|no|bool|Refuse to relaunch the jobs this template launched, for anyone. The template itself can still be launched.|
 |`survey_enabled`|""|no|bool|Enable a survey on the job template.|
 |`survey_spec`|""|no|dict|JSON/YAML dict formatted survey definition.|
 |`survey`|""|no|dict|JSON/YAML dict formatted survey definition. Alias of survey_spec|

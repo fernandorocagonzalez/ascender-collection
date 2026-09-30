@@ -32,6 +32,14 @@ options:
         - Signifies that this InstanceGroup should act as a ContainerGroup. If no credential is specified, the underlying Pod's ServiceAccount will be used.
       required: False
       type: bool
+    mesh_node:
+      description:
+        - Hostname, ID, or named URL of the hop node of the receptor mesh that runs this container group's pods, on the cluster that node lives in.
+        - Only a container group can have one, and it cannot have a C(credential) as well, because the pods run under the service account of that node.
+        - The node has to be a hop node that is not being deprovisioned.
+        - An empty string clears it, and the pods run on the cluster Ascender itself runs on.
+      required: False
+      type: str
     policy_instance_percentage:
       description:
         - Minimum percentage of all instances that will be automatically assigned to this group when new instances come online.
@@ -99,6 +107,7 @@ def main():
         new_name=dict(),
         credential=dict(),
         is_container_group=dict(type='bool'),
+        mesh_node=dict(),
         policy_instance_percentage=dict(type='int'),
         policy_instance_minimum=dict(type='int'),
         max_concurrent_jobs=dict(type='int'),
@@ -117,6 +126,7 @@ def main():
     new_name = module.params.get("new_name")
     credential = module.params.get('credential')
     is_container_group = module.params.get('is_container_group')
+    mesh_node = module.params.get('mesh_node')
     policy_instance_percentage = module.params.get('policy_instance_percentage')
     policy_instance_minimum = module.params.get('policy_instance_minimum')
     max_concurrent_jobs = module.params.get('max_concurrent_jobs')
@@ -137,6 +147,9 @@ def main():
     credential_id = None
     if credential:
         credential_id = module.resolve_name_to_id('credentials', credential)
+    mesh_node_id = None
+    if mesh_node:
+        mesh_node_id = module.resolve_name_to_id('instances', mesh_node)
     instances_ids = None
     if instances is not None:
         instances_ids = []
@@ -153,6 +166,11 @@ def main():
             new_fields['credential'] = credential_id
     if is_container_group is not None:
         new_fields['is_container_group'] = is_container_group
+    if mesh_node is not None:
+        if mesh_node == '':
+            new_fields['mesh_node'] = ''
+        else:
+            new_fields['mesh_node'] = mesh_node_id
     if policy_instance_percentage is not None:
         new_fields['policy_instance_percentage'] = policy_instance_percentage
     if policy_instance_minimum is not None:

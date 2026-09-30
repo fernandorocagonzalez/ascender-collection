@@ -173,6 +173,10 @@ argument_specs:
         #     required: false
         #     type: bool
         #     description: Prevent falling back to instance groups set on the associated inventory or organization.
+        #   prevent_relaunch:
+        #     required: false
+        #     type: bool
+        #     description: Refuse to relaunch the jobs this template launched, for anyone. The template itself can still be launched.
         #   survey_enabled:
         #     required: false
         #     type: bool

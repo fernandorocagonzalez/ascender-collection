@@ -70,6 +70,7 @@
           }}"
         prevent_instance_group_fallback: "{{ __controller_template_item.prevent_instance_group_fallback | default((false if controller_configuration_job_templates_enforce_defaults
           else omit)) }}"
+        prevent_relaunch: "{{ __controller_template_item.prevent_relaunch | default((false if controller_configuration_job_templates_enforce_defaults else omit)) }}"
         survey_enabled: "{{ __controller_template_item.survey_enabled | default((false if controller_configuration_job_templates_enforce_defaults else omit)) }}"
         survey_spec: "{{ __controller_template_item.related.survey_spec | default(__controller_template_item.survey_spec | default(__controller_template_item.survey |
           default(({} if controller_configuration_job_templates_enforce_defaults else omit), true))) }}"
