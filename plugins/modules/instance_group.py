@@ -159,18 +159,15 @@ def main():
     # Create the data that gets sent for create and update
     new_fields = {}
     new_fields['name'] = new_name if new_name else (module.get_item_name(existing_item) if existing_item else name)
+    # An empty string clears the field. It goes out as None, which is how the API
+    # returns an unset FK, so a group that already has none compares equal and is not
+    # patched (or reported as changed in check mode) on every run.
     if credential is not None:
-        if credential == '':
-            new_fields['credential'] = ''
-        else:
-            new_fields['credential'] = credential_id
+        new_fields['credential'] = credential_id
     if is_container_group is not None:
         new_fields['is_container_group'] = is_container_group
     if mesh_node is not None:
-        if mesh_node == '':
-            new_fields['mesh_node'] = ''
-        else:
-            new_fields['mesh_node'] = mesh_node_id
+        new_fields['mesh_node'] = mesh_node_id
     if policy_instance_percentage is not None:
         new_fields['policy_instance_percentage'] = policy_instance_percentage
     if policy_instance_minimum is not None:

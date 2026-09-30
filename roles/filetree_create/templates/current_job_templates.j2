@@ -211,7 +211,7 @@ controller_templates:
       - "{{ notification_success.name }}"
 {% endfor %}
 {% endif %}
-{% if query_notification_changed | default([]) | length > 0 %}
+{% if query_notification_changed | length > 0 %}
     notification_templates_changed:
 {% for notification_changed in query_notification_changed %}
       - "{{ notification_changed.name }}"

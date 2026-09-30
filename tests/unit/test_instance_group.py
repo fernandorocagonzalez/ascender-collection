@@ -89,3 +89,31 @@ def test_container_group_mesh_node_must_be_hop(run_module, admin_user):
     assert result.get('failed', False), result
     assert 'hop' in result['msg']
     assert not InstanceGroup.objects.filter(name='remote-c-group').exists()
+
+
+@pytest.mark.django_db
+def test_clearing_unset_fks_is_not_a_change(run_module, admin_user):
+    """The role sends an empty credential and mesh_node to every group when it enforces
+    defaults. On a group that has neither, that must compare equal to what the API
+    returns, or check mode reports every instance group as changed on every run.
+    """
+    result = run_module('instance_group', {'name': 'plain-c-group', 'is_container_group': True}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+
+    result = run_module('instance_group', {'name': 'plain-c-group', 'credential': '', 'mesh_node': '', '_ansible_check_mode': True}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert not result['changed']
+
+
+@pytest.mark.django_db
+def test_move_container_group_from_credential_to_mesh_node(run_module, admin_user, kube_credential):
+    hop = Instance.objects.create(hostname='hop.example.com', node_type='hop')
+    result = run_module('instance_group', {'name': 'move-c-group', 'is_container_group': True, 'credential': kube_credential.name}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+
+    result = run_module('instance_group', {'name': 'move-c-group', 'credential': '', 'mesh_node': hop.hostname}, admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert result['changed']
+    ig = InstanceGroup.objects.get(name='move-c-group')
+    assert ig.credential is None
+    assert ig.mesh_node_id == hop.id
