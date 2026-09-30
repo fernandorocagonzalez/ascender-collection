@@ -211,6 +211,12 @@ controller_templates:
       - "{{ notification_success.name }}"
 {% endfor %}
 {% endif %}
+{% if query_notification_changed | default([]) | length > 0 %}
+    notification_templates_changed:
+{% for notification_changed in query_notification_changed %}
+      - "{{ notification_changed.name }}"
+{% endfor %}
+{% endif %}
     survey_enabled: {{ template_overrides_resources.job_template[current_job_templates_asset_value.name].survey_enabled
                        | default(template_overrides_global.job_template.survey_enabled)
                        | default(current_job_templates_asset_value.survey_enabled | bool | lower) }}

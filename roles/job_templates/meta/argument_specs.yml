@@ -254,6 +254,11 @@ argument_specs:
         #     type: list
         #     elements: str
         #     description: The notifications on error to use for this organization in a list.
+        #   notification_templates_changed:
+        #     required: false
+        #     type: list
+        #     elements: str
+        #     description: The notifications to send when a job of this template reports changes, in a list.
         #   state:
         #     default: "{{ controller_state | default('present') }}"
         #     required: false

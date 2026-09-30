@@ -13,6 +13,11 @@ minor_changes:
     ``filetree_create`` exports it.
   - The ``notification_template`` module accepts ``matrix`` as a ``notification_type``
     and documents the configuration keys it takes (ctrliq/ascender#1052).
+  - The ``organization`` module takes ``notification_templates_changed``, the
+    notifications sent when a job reports changes (ctrliq/ascender#696). The
+    ``job_template`` module already took it, and now the ``job_templates`` and
+    ``organizations`` roles pass it through and ``filetree_create`` exports it for
+    both, so a round trip through a file tree keeps those notifications.
 removed_features:
   - The ``credential_type`` module no longer offers ``insights`` as a ``kind``. Ascender
     removed that kind in ctrliq/ascender#932 and refuses it, so it could only fail.

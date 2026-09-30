@@ -94,6 +94,7 @@ This role accepts two data models. A simple straightforward easy to maintain mod
 |`notification_templates_success`|""|no|list|The notifications on success to use for this organization in a list.|
 |`notification_templates_error`|""|no|list|The notifications on error to use for this organization in a list.|
 |`notification_templates_approvals`|""|no|list|The notifications for approval to use for this organization in a list.|
+|`notification_templates_changed`|""|no|list|The notifications to send when a job of this organization reports changes, in a list.|
 |`state`|`present`|no|str|Desired state of the resource.|
 
 ### Standard Organization Data Structure model

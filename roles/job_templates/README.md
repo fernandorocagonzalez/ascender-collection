@@ -134,6 +134,7 @@ This also speeds up the overall role.
 |`notification_templates_started`|""|no|list|The notifications on started to use for this organization in a list. Set to `[]` to remove all. Omitting this key leaves existing notifications unchanged.|
 |`notification_templates_success`|""|no|list|The notifications on success to use for this organization in a list. Set to `[]` to remove all. Omitting this key leaves existing notifications unchanged.|
 |`notification_templates_error`|""|no|list|The notifications on error to use for this organization in a list. Set to `[]` to remove all. Omitting this key leaves existing notifications unchanged.|
+|`notification_templates_changed`|""|no|list|The notifications to send when a job of this template reports changes, in a list. Set to `[]` to remove all. Omitting this key leaves existing notifications unchanged.|
 |`state`|`present`|no|str|Desired state of the resource.|
 
 ### Surveys

@@ -331,3 +331,20 @@ def test_job_template_prevent_relaunch(run_module, admin_user, project, inventor
     result = run_module('job_template', dict(module_args, prevent_relaunch=False), admin_user)
     assert result['changed']
     assert not JobTemplate.objects.get(name='foo').prevent_relaunch
+
+
+@pytest.mark.django_db
+def test_job_template_notification_templates_changed(run_module, admin_user, project, inventory, notification_template):
+    base = dict(name='foo', playbook='helloworld.yml', project=project.name, inventory=inventory.name)
+    result = run_module('job_template', dict(base, notification_templates_changed=[notification_template.name]), admin_user)
+    assert not result.get('failed', False), result.get('msg', result)
+    assert result['changed']
+    jt = JobTemplate.objects.get(name='foo')
+    assert list(jt.notification_templates_changed.values_list('id', flat=True)) == [notification_template.id]
+
+    result = run_module('job_template', dict(base, notification_templates_changed=[notification_template.name]), admin_user)
+    assert not result['changed']
+
+    result = run_module('job_template', dict(base, notification_templates_changed=[]), admin_user)
+    assert result['changed']
+    assert not jt.notification_templates_changed.exists()
